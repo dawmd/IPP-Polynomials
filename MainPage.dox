@@ -1,0 +1,144 @@
+/**
+@mainpage Dokumentacja zadania wielomiany
+
+### Treść zadania
+
+Uwaga: aktualna treść zadania znajduje się w [Moodle](https://moodle.mimuw.edu.pl).
+
+### Opis programu
+
+Tegoroczne duże zadanie polega na zaimplementowaniu operacji na wielomianach
+rzadkich wielu zmiennych. Wielomiany te można podzielić na dwie kategorie: 
+wielomiany stałe i wielomiany niestałe. Wielomian stały jest reprezentowany przez
+współczynnik (wielomian jest wówczas funkcją stałą tożsamościowo równą temu
+współczynnikowi), zaś wielomian niestały jako tablica jednomianów o pewnym
+rozmiarze.
+
+Jednomian z kolei składa się z wielomianu i wykładnika. Aby to zobrazować, niech
+@f$p@f$ będzie wielomianem, @f$x_i@f$ zmienną, a @f$k@f$ pewną liczbą. Wówczas
+@f$px_i^k@f$ jest jednomianem, składającym się z wielomianu @f$p@f$
+i wykładnika @f$k@f$.
+
+Wielomiany mają więc definicję rekurencyjną. Wszystkie terminy odnoszące się do
+wielomianów jednej zmiennej mają zastosowanie także w tym przypadku; w szczególności
+jednomian, będący częścią pewnego wielomianu @f$p@f$, a który ma wykładnik
+równy zeru, nazywamy "wyrazem wolnym". Nie należy jednak utożsamiać go z pewną
+funkcją stałą -- może być zależny od pewnych innych argumentów.
+
+Korzystanie z dostępnych operacji jest możliwe za sprawą kalkulatora. Pozwala on dodwać
+wielomiany i wykonywać na nich dostępne polecenia w czasie rzeczywistym. Bazuje on na
+strukturze stosu -- użytkownik podając wielomian dodaje go na wierzchołek stosu. Również
+dostępne operacje wpływają na jego postać (czyt. dalej).
+
+### Dostępne operacje w kalkulatorze
+- ZERO -- dodaje wielomian zerowy na wierzchołek stosu
+- IS_COEFF -- sprawdza, czy wielomian znajdujący się na wierzchołku stosu jest stały,
+- IS_ZERO -- sprawdza, czy wielomian znajdujący się na wierzchołku stosu jest zerowy,
+- CLONE -- wstawia na stos kopię wielomianu z jego wierzchołka,
+- ADD -- zastępuje dwa wielomiany znajdujące się na wierzchołku stosu ich sumą,
+- MUL -- mnoży dwa wielomiany znajdujące się na wierzchołku stosu,
+- NEG -- neguje wielomian na wierzchołku stosu,
+- SUB -- zastępuje dwa wielomiany na wierzchołku stosu różnicą wielomianu z wierzchołka
+i wielomianu znajdującego się pod nim,
+- IS_EQ -- sprawdza, czy dwa wielomiany znajdujące się na wierzchołku stosu są równe,
+- DEG -- wyświetla stopień wielomianu z wierzchołka stosu,
+- DEG_BY @p idx -- wyświetla stopień wielomianu z wierzchołka stosu ze względu na zmienną o
+numerze @p idx,
+- AT @p x -- zastępuje wielomian z wierzchołka stosu jego wartością w punkcie @p x,
+- PRINT -- wypisuje wielomian z wierzchołka stosu,
+- POP -- usuwa wielomian z wierzchołka stosu,
+- COMPOSE @p k -- usuwa ze stosu wielomianów @f$k+1@f$ wielomianów i pierwszy z nich
+składa z pozostałymi, ułożonymi w odwrotnej kolejności do tej, z jaką są ściągane
+ze stosu (definicja złożenia jest opisana niżej).
+
+### Definicja operacji złożenia wielomianów
+Dany jest wielomian @f$p@f$ i @f$k@f$ wielomianów @f$q_0, q_1, q_2, \dots, q_{k-1}@f$. Niech
+@f$l@f$ oznacza liczbę zmiennych wielomianu @f$p@f$ i niech te zmienne są oznaczone
+odpowiednio @f$x_0, x_1, x_2, \dots, x_{l-1}@f$. Wynikiem złożenia jest wielomian
+@f$p(q_0, q_1, q_2, \dots)@f$, czyli wielomian powstający przez podstawienie
+w wielomianie @f$p@f$ pod zmienną @f$x_i@f$ wielomianu @f$q_i@f$ dla
+@f$i = 0, 1, 2, \dots, \mathrm{min}(k, l) - 1@f$. Jeśli @f$k < l@f$, to pod
+zmienne @f$x_k, \dots, x_{l-1}@f$ podstawiamy zera. Na przykład, jeśli @f$k = 0@f$, to
+wynikiem złożenia jest liczba @f$p(0, 0, 0, \dots)@f$.
+
+### Możliwe błędy
+W przypadku napotkania problemu z wykonaniem polecenia lub dodaniem wielomianu, program przerywa
+operację i wypisuje jeden z błędów:
+- ERROR @p w WRONG COMMAND -- błędna nazwa polecenia,
+- ERROR @p w DEG BY WRONG VARIABLE -- nie podano parametru lub jest on niepoprawny,
+- ERROR @p w AT WRONG VALUE -- nie podano parametru lub jest on niepoprawny,
+- ERROR @p w COMPOSE WRONG PARAMETER -- nie podano parametru lub jest on niepoprawny,
+- ERROR @p w STACK UNDERFLOW -- na stosie nie ma wystarczającej liczby wielomianów do wykonania
+operacji,
+- ERROR @p w WRONG POLY -- napotkano błąd podczas parsowania wielomianu,
+gdzie @p w jest numerem wiersza, w którym nastąpił błąd.
+
+### Struktura wielomianów
+
+Można lepiej zrozumieć, jak tak naprawdę zbudowana ta struktura danych, jeśli
+wielomian przedstawimy w postaci grafu skierowanego. Ustalmy wielomian @f$p@f$
+i niech będzie wierzchołkiem.
+
+Jeśli jest on wielomianem stałym, nie wychodzą
+z niego żadne krawędzie. Można więc powiedzieć, że otrzymaliśmy drzewo,
+a wierzchołek ten jest w nim liściem.
+
+W przypadku, gdy wielomian ten nie jest stały, wychodzą z odpowiadającego mu wierzchołka
+krawędzie, prowadzące z kolei do wierzchołków reprezentujących jednomiany, z których się
+składa. Wyobraźmy sobie typowe przedstawienie drzewa; oryginalny wielomian jest w nim
+korzeniem, a rozważane teraz jednomiany są usytuowane "poziom" niżej -- można powiedzieć,
+że stoją w pewnego rodzaju rzędzie. Interpretując teraz pojęcie jednomianu jako parę
+wielomianu i wykładnika, możemy potraktować każdy z tych jednomianów jako wielomian,
+z którego jest złożony i wywoływać tę samą procedurę aż do natrafienia na wielomian stały.
+Jest to koniec grafu -- liść.
+
+W ten sposób otrzymaliśmy "wielopoziomowe" drzewo. Poziomy te możemy interpretować jako
+kolejne zmienne, będące argumentami oryginalnego wielomianu -- korzenia. Indeksując te
+poziomy od @f$0@f$ -- w przypadku korzenia -- i idąc "w dół", otrzymamy prosty obraz
+zależności wartości oryginalnego wielomianu od danej zmiennej. Wystarczy bowiem zaaplikować
+dany argument do odpowiadającego mu poziomu, co z kolei wpłynie na wszystkie wielomiany
+znajdujące się na poziomach niższych, a następnie, po wykonaniu standardowych operacji
+mnożeń i sumowań, otrzymać nowy wielomian -- być może stały.
+
+Poziomy te możemy także nazwać "warstawami". Jest to z pewnością najwygodniejszy sposób
+myślenia o tej strukturze danych.
+
+### Aspekty techniczne
+W implementacji operacji na wielomianach rzadkich wielu zmiennych przyjęto niezmiennik
+mówiący, że w tablicy żadnego wielomianu niestałego nie znajduje się jednomian
+tożsamościowo równy zeru (tzn. że dla dowolnego argumentu przyjmującego zawsze tę samą
+wartość), wszystkie jednomiany w tych tablicach są posortowane rosnąco ze względu na
+wartość odpowidającyh im wykładników (w szczególności dany wykładnik nie może pojawić
+się więcej niż raz). Ponadto wielomian stały nie posiada tablicy jednomianów
+-- w implementacji przedstawia się to w ten sposób, że wskaźnik na tablicę jest
+pusty (równy @p NULL). Zabiegi te pozwalają łatwiej manipulować strukturą wielomianów
+i ułatwiają wykonywanie na nich operacji algebraicznych. Należy też zaznaczyć, że
+wszystkie funkcje zawsze ograniczają używaną przez wielomiany pamięć do minimum
+-- oznacza to, że rozmiar tablicy zawsze odpowiada liczbie jednomianów, które się
+w niej znajdują.
+
+Implementacja uwzględnia tzw. "overflow" współczynników jednomianów, co przekłada się
+w szczególności na to, że mnożenie dwóch niezerowych wielomianów może zwrócić
+wielomian zerowy (wielomian stały tożsamościowo równy zeru, patrz wyżej). Dotyczy to
+także pozostałych operacji algebraicznych.
+
+W implementacji starano się zmniejszyć zużycie pamięci do maksymalnego minimum, często
+korzystając z funkcji pomocniczych do określenia, jak wiele pamięci może wymagać
+wynik danej operacji -- zazwyczaj przekłada się to na liczbę jednomianów w wielomianie
+wynikowym (wielomianie będącym wynikiem działania danej funkcji).
+
+Wszystkie funkcje starano się opisać zwięźle, ale jednocześnie zapewniając jak najwięcej
+informacji, które mogą okazać się przydatne przy rozwijaniu programu lub podczas
+próby zrozumienia jego działania. Pliki z rozszerzeniem @p .c mają więc dłuższy,
+opisujący całość działania funkcji opis, znajdujący się przed każdą z nich;
+komentarze wewnątrz funkcji są natomiast krótsze, lecz dużo bardziej szczegółowe.
+
+Starano się także umożliwić jak najprostszy rozwój programu: dzięki zastosowaniu tablic
+z charakterystyką poleceń, łatwo rozwinąć program o nowe funkcjonalności.
+
+Szczegóły działania programu są również dostępne na odpowiedniej stronie niniejszej
+dokumentacji.
+
+### Dalszy rozwój programu
+Wartym rozważenia krokiem w kierunku rozwoju programu może być dodanie nowych operacji.
+*/
