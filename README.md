@@ -1,6 +1,6 @@
 # <b>Multivariable polynomials library</b> #
 ## <b>Description</b> ##
-The library implements multivariable polynomials in the integer domain (`unsigned long`). Every polynomial is defined recurentially: it's either constant, represented by a single coefficient, or non-constant. In the latter case, it's represented as a sum:
+The library implements multivariable polynomials in the integer domain (`unsigned long`). Every polynomial is defined recursively: it's either constant, represented by a single coefficient, or non-constant. In the latter case, it's represented as a sum:
 <p align="center"><a href="https://www.codecogs.com/eqnedit.php?latex=\sum_{k=1}^{n}&space;p_kx_1^{\alpha_k}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\sum_{k=1}^{n}&space;p_kx_1^{\alpha_k}" title="\sum_{k=1}^{n} p_kx_1^{\alpha_k}" /></a>
 </p>
 where <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\alpha_k" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\alpha_k" title="\alpha_k" /></a> are pairwise distinct non-negative integer numbers and <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;p_k" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;p_k" title="p_k" /></a> are other polynomials. Assuming <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;p_k" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;p_k" title="p_k" /></a> is a non-constant polynomial
